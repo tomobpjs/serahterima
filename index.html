@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -626,6 +626,13 @@
         let inventoryItems = {}; 
         let currentCompressedImage = null;
         let currentEditItemKey = null;
+
+        const initialTransactions = [
+            { id: 'TRX-101', type: 'inbound', date: '2026-07-01', itemName: 'Laptop Asus Zenbook', itemBrand: 'UX3402 Core i7', qty: 10, price: 14500000, vendor: 'PT. Asus Indonesia', notes: 'Pengadaan baru Q3', photo: '' },
+            { id: 'TRX-102', type: 'inbound', date: '2026-07-05', itemName: 'Monitor Dell 27"', itemBrand: 'P2722H', qty: 15, price: 3200000, vendor: 'CV. Tech Solution', notes: 'Tambahan layar IT', photo: '' },
+            { id: 'TRX-103', type: 'outbound', date: '2026-07-10', itemName: 'Laptop Asus Zenbook', itemBrand: 'UX3402 Core i7', qty: 3, dept: 'Divisi Software Engineering', notes: 'Laptop kerja dev baru' },
+            { id: 'TRX-104', type: 'outbound', date: '2026-07-12', itemName: 'Monitor Dell 27"', itemBrand: 'P2722H', qty: 4, dept: 'Divisi Marketing', notes: 'Fasilitas tim desain' }
+        ];
 
         // Load Data from Firebase Firestore
         async function loadData() {
