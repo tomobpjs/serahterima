@@ -1,0 +1,1419 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InvenCloud - Sistem Manajemen Inventaris Cloud Firebase</title>
+    <!-- Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 25s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
+            .print-area { width: 100%; margin: 0; padding: 0; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col md:flex-row">
+
+    <!-- Mobile Top Navigation Header -->
+    <div class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center sticky top-0 z-50 border-b border-slate-800 no-print">
+        <div class="flex items-center gap-2">
+            <div class="bg-brand-600 p-2 rounded-lg">
+                <i data-lucide="box" class="w-5 h-5 text-white"></i>
+            </div>
+            <span class="font-bold text-sm tracking-wide">InvenCloud</span>
+        </div>
+        <button onclick="toggleMobileSidebar()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+    </div>
+
+    <!-- SIDEBAR NAVIGASI DI SAMPING (Desktop & Mobile Drawer) -->
+    <aside id="sidebar" class="no-print fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 flex flex-col transform -translate-x-full md:translate-x-0 md:static transition-transform duration-300 ease-in-out border-r border-slate-800 shrink-0">
+        <!-- Sidebar Header / Logo -->
+        <div class="p-6 border-b border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-brand-600 to-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-brand-500/20">
+                    <i data-lucide="box" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-white tracking-wide">InvenCloud</h1>
+                    <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Cloud Firebase</p>
+                </div>
+            </div>
+            <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Sidebar Navigation Items -->
+        <nav class="flex-grow p-4 space-y-1.5 overflow-y-auto">
+            <div class="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Menu Utama</div>
+            
+            <button onclick="switchTab('dashboard')" id="side-dashboard" class="side-nav-btn w-full px-4 py-3 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center gap-3 bg-brand-600 text-white shadow-md shadow-brand-600/20">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+            </button>
+            <button onclick="switchTab('masuk')" id="side-masuk" class="side-nav-btn w-full px-4 py-3 rounded-xl text-xs font-medium transition-all duration-200 flex items-center gap-3 hover:bg-slate-800 text-slate-400 hover:text-slate-100">
+                <i data-lucide="arrow-down-left" class="w-4 h-4"></i> Barang Masuk
+            </button>
+            <button onclick="switchTab('distribusi')" id="side-distribusi" class="side-nav-btn w-full px-4 py-3 rounded-xl text-xs font-medium transition-all duration-200 flex items-center gap-3 hover:bg-slate-800 text-slate-400 hover:text-slate-100">
+                <i data-lucide="arrow-up-right" class="w-4 h-4"></i> Distribusi Barang
+            </button>
+            <button onclick="switchTab('laporan')" id="side-laporan" class="side-nav-btn w-full px-4 py-3 rounded-xl text-xs font-medium transition-all duration-200 flex items-center gap-3 hover:bg-slate-800 text-slate-400 hover:text-slate-100">
+                <i data-lucide="file-text" class="w-4 h-4"></i> Laporan Bulanan
+            </button>
+            <button onclick="switchTab('lacak')" id="side-lacak" class="side-nav-btn w-full px-4 py-3 rounded-xl text-xs font-medium transition-all duration-200 flex items-center gap-3 hover:bg-slate-800 text-slate-400 hover:text-slate-100">
+                <i data-lucide="search" class="w-4 h-4"></i> Lacak Barang
+            </button>
+        </nav>
+
+        <!-- Sidebar Footer Status Cloud Firebase -->
+        <div class="p-4 border-t border-slate-800 bg-slate-950/40">
+            <div id="cloud-status" class="flex items-center gap-2 bg-emerald-950/50 text-emerald-400 border border-emerald-800/50 px-3 py-2 rounded-xl text-xs font-medium">
+                <span id="status-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span id="status-text" class="truncate">Menghubungkan ke Firebase...</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay Mobile Sidebar -->
+    <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden md:hidden no-print"></div>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-grow flex flex-col min-w-0">
+
+        <!-- Running Text Header -->
+        <div class="bg-slate-900 text-white py-2 px-4 border-b border-slate-800 shadow-sm overflow-hidden relative no-print">
+            <div class="flex items-center max-w-full mx-auto">
+                <div class="bg-brand-600 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 z-10 shrink-0 shadow">
+                    <i data-lucide="bell" class="w-3.5 h-3.5 animate-bounce"></i>
+                    <span>INFO INVENTARIS</span>
+                </div>
+                <div class="overflow-hidden w-full ml-3 relative">
+                    <div class="animate-marquee text-xs font-medium tracking-wide text-slate-300">
+                        ✨ Sistem aktif dengan Cloud Firebase Firestore • Data tersimpan secara aman dan sinkron secara real-time • Gunakan menu di samping untuk mengelola inventaris[cite: 1].
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Content Body -->
+        <main class="flex-grow p-4 sm:p-6 lg:p-8 overflow-y-auto">
+
+            <!-- ================= DASHBOARD PAGE ================= -->
+            <section id="page-dashboard" class="space-y-6">
+                <!-- Welcome Banner -->
+                <div class="bg-gradient-to-r from-brand-700 via-brand-600 to-indigo-800 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-brand-700/15 relative overflow-hidden">
+                    <div class="relative z-10 max-w-2xl">
+                        <h2 class="text-2xl md:text-3xl font-bold tracking-tight mb-2">Manajemen Stok Real-Time (Firebase)</h2>
+                        <p class="text-brand-100 text-xs md:text-sm leading-relaxed mb-6">Kelola pencatatan barang masuk, pengeluaran unit, pencarian jejak transaksi, hingga analisis laporan bulanan secara praktis melalui panel samping[cite: 1].</p>
+                        <div class="flex flex-wrap gap-3">
+                            <button onclick="switchTab('masuk')" class="bg-white text-brand-700 font-semibold px-4 py-2.5 rounded-xl text-xs hover:bg-brand-50 transition shadow">
+                                + Input Barang Masuk
+                            </button>
+                            <button onclick="switchTab('distribusi')" class="bg-brand-500/40 hover:bg-brand-500/60 text-white border border-white/20 font-semibold px-4 py-2.5 rounded-xl text-xs transition backdrop-blur-sm">
+                                + Keluarkan Barang
+                            </button>
+                        </div>
+                    </div>
+                    <i data-lucide="package-check" class="absolute -right-6 -bottom-6 w-64 h-64 text-white/10 pointer-events-none"></i>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-semibold uppercase text-slate-400 tracking-wider">Total Item Unik</span>
+                            <div class="p-2 bg-blue-50 text-blue-600 rounded-xl"><i data-lucide="layers" class="w-5 h-5"></i></div>
+                        </div>
+                        <h3 id="stat-total-items" class="text-2xl font-bold text-slate-900">0</h3>
+                        <p class="text-xs text-slate-500 mt-1">Jenis barang tersimpan[cite: 1]</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-semibold uppercase text-slate-400 tracking-wider">Total Stok Fisik</span>
+                            <div class="p-2 bg-emerald-50 text-emerald-600 rounded-xl"><i data-lucide="boxes" class="w-5 h-5"></i></div>
+                        </div>
+                        <h3 id="stat-total-stock" class="text-2xl font-bold text-slate-900">0</h3>
+                        <p class="text-xs text-emerald-600 font-medium mt-1">Tersedia di gudang[cite: 1]</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-semibold uppercase text-slate-400 tracking-wider">Total Terdistribusi</span>
+                            <div class="p-2 bg-amber-50 text-amber-600 rounded-xl"><i data-lucide="send" class="w-5 h-5"></i></div>
+                        </div>
+                        <h3 id="stat-total-out" class="text-2xl font-bold text-slate-900">0</h3>
+                        <p class="text-xs text-slate-500 mt-1">Item telah disalurkan[cite: 1]</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-semibold uppercase text-slate-400 tracking-wider">Nilai Estimasi Stok</span>
+                            <div class="p-2 bg-purple-50 text-purple-600 rounded-xl"><i data-lucide="wallet" class="w-5 h-5"></i></div>
+                        </div>
+                        <h3 id="stat-total-value" class="text-lg font-bold text-slate-900">Rp 0</h3>
+                        <p class="text-xs text-slate-500 mt-1">Aset barang dalam gudang[cite: 1]</p>
+                    </div>
+                </div>
+
+                <!-- Ringkasan Stok Tersedia -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base">Ringkasan Stok Inventaris</h3>
+                            <p class="text-xs text-slate-500">Ketersediaan barang saat ini secara otomatis terintegrasi[cite: 1].</p>
+                        </div>
+                        <div class="relative w-full sm:w-64">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+                            <input type="text" id="dash-search" oninput="renderDashboard()" placeholder="Cari nama barang..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-600">
+                            <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider border-y border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-4 font-semibold">Nama Barang</th>
+                                    <th class="py-3 px-4 font-semibold">Merek / Tipe</th>
+                                    <th class="py-3 px-4 font-semibold text-right">Total Masuk</th>
+                                    <th class="py-3 px-4 font-semibold text-right">Total Keluar</th>
+                                    <th class="py-3 px-4 font-semibold text-right">Sisa Stok</th>
+                                    <th class="py-3 px-4 font-semibold text-center">Status</th>
+                                    <th class="py-3 px-4 font-semibold text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-stock-tbody" class="divide-y divide-slate-100">
+                                <!-- JS dynamic render -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= BARANG MASUK PAGE ================= -->
+            <section id="page-masuk" class="hidden space-y-6">
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    <!-- Form Input Barang Masuk -->
+                    <div class="xl:col-span-1 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm h-fit">
+                        <div class="flex items-center gap-2 pb-4 mb-4 border-b border-slate-100">
+                            <div class="p-2 bg-brand-50 text-brand-600 rounded-xl"><i data-lucide="plus-circle" class="w-5 h-5"></i></div>
+                            <div>
+                                <h3 id="form-masuk-title" class="font-bold text-slate-900 text-sm">Input Barang Masuk</h3>
+                                <p class="text-[11px] text-slate-400">Isi detail penerimaan barang baru[cite: 1]</p>
+                            </div>
+                        </div>
+
+                        <form id="form-inbound" onsubmit="handleInboundSubmit(event)" class="space-y-4">
+                            <input type="hidden" id="in-doc-id">
+                            
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Terima <span class="text-rose-500">*</span></label>
+                                <input type="date" id="in-date" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Barang <span class="text-rose-500">*</span></label>
+                                <input type="text" id="in-name" placeholder="Contoh: Laptop Asus Zenbook" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Merek / Tipe Barang <span class="text-slate-400 font-normal">(Opsional)</span></label>
+                                <input type="text" id="in-brand" placeholder="Contoh: UX3402 / Core i7" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah <span class="text-rose-500">*</span></label>
+                                    <input type="number" id="in-qty" min="1" placeholder="10" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Harga Satuan <span class="text-rose-500">*</span></label>
+                                    <input type="number" id="in-price" min="0" placeholder="Rp" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Vendor / Pemasok <span class="text-rose-500">*</span></label>
+                                <input type="text" id="in-vendor" placeholder="Contoh: PT. Komputer Jaya" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Keterangan</label>
+                                <textarea id="in-notes" rows="2" placeholder="Catatan tambahan, No. PO, dll." class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Foto Barang <span class="text-slate-400 font-normal">(Opsional - Kompres Otomatis)[cite: 1]</span></label>
+                                <div class="mt-1 flex justify-center px-4 pt-4 pb-4 border-2 border-slate-200 border-dashed rounded-xl bg-slate-50 hover:bg-slate-100/80 transition cursor-pointer relative" onclick="document.getElementById('in-photo').click()">
+                                    <div class="space-y-1 text-center">
+                                        <div id="photo-preview-container" class="hidden mb-2">
+                                            <img id="photo-preview" src="" alt="Preview" class="max-h-28 mx-auto rounded-lg shadow-sm border border-slate-200 object-cover">
+                                        </div>
+                                        <i data-lucide="camera" id="photo-icon" class="mx-auto h-8 w-8 text-slate-400"></i>
+                                        <div class="text-xs text-slate-600">
+                                            <span class="font-medium text-brand-600">Upload gambar</span> atau ambil foto
+                                        </div>
+                                        <p class="text-[10px] text-slate-400">JPG, PNG (Otomatis terkompres)[cite: 1]</p>
+                                    </div>
+                                    <input id="in-photo" type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" id="btn-save-inbound" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-brand-600/20">
+                                    <i data-lucide="save" class="w-4 h-4"></i> Simpan ke Cloud
+                                </button>
+                                <button type="button" id="btn-cancel-inbound" onclick="resetInboundForm()" class="hidden bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium py-2.5 px-3 rounded-xl text-xs transition">
+                                    Batal
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Database Tabel Barang Masuk -->
+                    <div class="xl:col-span-2 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 mb-4 border-b border-slate-100">
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-sm">Database Riwayat Barang Masuk</h3>
+                                <p class="text-[11px] text-slate-400">Daftar transaksi barang masuk yang tersimpan di Cloud Firebase[cite: 1]</p>
+                            </div>
+                            <div class="relative w-full sm:w-56">
+                                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400"></i>
+                                <input type="text" id="inbound-search" oninput="renderInboundTable()" placeholder="Cari barang/vendor..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto flex-grow">
+                            <table class="w-full text-left text-xs text-slate-600">
+                                <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider border-y border-slate-200">
+                                    <tr>
+                                        <th class="py-3 px-3">Foto</th>
+                                        <th class="py-3 px-3">Tgl & Barang</th>
+                                        <th class="py-3 px-3">Merek/Tipe</th>
+                                        <th class="py-3 px-3">Qty</th>
+                                        <th class="py-3 px-3">Harga</th>
+                                        <th class="py-3 px-3">Vendor</th>
+                                        <th class="py-3 px-3 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inbound-tbody" class="divide-y divide-slate-100">
+                                    <!-- Dynamic Render -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= DISTRIBUSI PAGE ================= -->
+            <section id="page-distribusi" class="hidden space-y-6">
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    <!-- Form Input Distribusi -->
+                    <div class="xl:col-span-1 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm h-fit">
+                        <div class="flex items-center gap-2 pb-4 mb-4 border-b border-slate-100">
+                            <div class="p-2 bg-amber-50 text-amber-600 rounded-xl"><i data-lucide="arrow-up-right" class="w-5 h-5"></i></div>
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-sm">Form Pengeluaran / Distribusi</h3>
+                                <p class="text-[11px] text-slate-400">Penyaluran barang ke unit / departemen[cite: 1]</p>
+                            </div>
+                        </div>
+
+                        <form id="form-outbound" onsubmit="handleOutboundSubmit(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Keluar <span class="text-rose-500">*</span></label>
+                                <input type="date" id="out-date" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Unit Penerima / Departemen <span class="text-rose-500">*</span></label>
+                                <input type="text" id="out-dept" placeholder="Contoh: Divisi IT / Keuangan" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Barang (Stok Terintegrasi) <span class="text-rose-500">*</span>[cite: 1]</label>
+                                <select id="out-item-select" onchange="updateOutboundMaxQty()" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                    <option value="">-- Pilih Barang --</option>
+                                </select>
+                                <p id="out-stock-info" class="text-[11px] text-slate-400 mt-1">Sisa stok tersedia: -</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Barang Keluar <span class="text-rose-500">*</span></label>
+                                <input type="number" id="out-qty" min="1" placeholder="1" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Keterangan / Keperluan</label>
+                                <textarea id="out-notes" rows="3" placeholder="Contoh: Pengadaan fasilitas karyawan baru" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-amber-600/20">
+                                <i data-lucide="send" class="w-4 h-4"></i> Distribusikan Barang
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Database Pengeluaran -->
+                    <div class="xl:col-span-2 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 mb-4 border-b border-slate-100">
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-sm">Riwayat Pengeluaran Barang</h3>
+                                <p class="text-[11px] text-slate-400">Catatan transaksi distribusi barang ke departemen[cite: 1]</p>
+                            </div>
+                            <div class="relative w-full sm:w-56">
+                                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400"></i>
+                                <input type="text" id="outbound-search" oninput="renderOutboundTable()" placeholder="Cari barang/departemen..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto flex-grow">
+                            <table class="w-full text-left text-xs text-slate-600">
+                                <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider border-y border-slate-200">
+                                    <tr>
+                                        <th class="py-3 px-3">Tgl Keluar</th>
+                                        <th class="py-3 px-3">Nama Barang</th>
+                                        <th class="py-3 px-3">Penerima / Dept</th>
+                                        <th class="py-3 px-3">Jumlah</th>
+                                        <th class="py-3 px-3">Keterangan</th>
+                                        <th class="py-3 px-3 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="outbound-tbody" class="divide-y divide-slate-100">
+                                    <!-- Dynamic Render -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= LAPORAN PAGE ================= -->
+            <section id="page-laporan" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm print-area">
+                    <!-- Filter Bar -->
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 mb-6 border-b border-slate-100 no-print">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base">Laporan Transaksi Bulanan</h3>
+                            <p class="text-xs text-slate-500">Rekapitulasi masuk dan keluar barang berdasarkan periode bulan[cite: 1]</p>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                            <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl p-1.5 text-xs">
+                                <i data-lucide="filter" class="w-4 h-4 text-slate-400 ml-1"></i>
+                                <input type="month" id="report-month" onchange="renderLaporan()" class="bg-transparent border-none text-xs font-medium focus:outline-none text-slate-700">
+                            </div>
+                            <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow">
+                                <i data-lucide="printer" class="w-4 h-4"></i> Cetak / Export PDF[cite: 1]
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Print Title Header -->
+                    <div class="hidden print:block mb-6 text-center">
+                        <h1 class="text-xl font-bold text-slate-900">INVENCLOUD FIREBASE MANAGEMENT</h1>
+                        <h2 class="text-sm font-semibold text-slate-600 uppercase" id="print-period-title">Laporan Inventaris Bulanan</h2>
+                        <p class="text-xs text-slate-400">Dicetak pada: <span id="print-date-stamp"></span></p>
+                    </div>
+
+                    <!-- Report Summary Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <p class="text-xs text-slate-500 font-medium">Total Unit Masuk</p>
+                            <h4 id="report-sum-in" class="text-xl font-bold text-blue-600">0</h4>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <p class="text-xs text-slate-500 font-medium">Total Unit Keluar</p>
+                            <h4 id="report-sum-out" class="text-xl font-bold text-amber-600">0</h4>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <p class="text-xs text-slate-500 font-medium">Nilai Total Transaksi Masuk</p>
+                            <h4 id="report-sum-value" class="text-xl font-bold text-emerald-600">Rp 0</h4>
+                        </div>
+                    </div>
+
+                    <!-- Report Combined Table -->
+                    <h4 class="font-bold text-slate-800 text-xs uppercase tracking-wider mb-3">Detail Jurnal Transaksi</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 uppercase font-semibold">
+                                    <th class="py-2.5 px-3 border border-slate-200">Tanggal</th>
+                                    <th class="py-2.5 px-3 border border-slate-200">Jenis</th>
+                                    <th class="py-2.5 px-3 border border-slate-200">Nama Barang</th>
+                                    <th class="py-2.5 px-3 border border-slate-200">Merek / Tipe</th>
+                                    <th class="py-2.5 px-3 border border-slate-200 text-right">Jumlah</th>
+                                    <th class="py-2.5 px-3 border border-slate-200">Pihak Terkait</th>
+                                    <th class="py-2.5 px-3 border border-slate-200">Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-tbody" class="divide-y divide-slate-200">
+                                <!-- Render JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= LACAK BARANG PAGE ================= -->
+            <section id="page-lacak" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <div class="mb-6">
+                        <h3 class="font-bold text-slate-900 text-base">Lacak Kartu Stok Barang</h3>
+                        <p class="text-xs text-slate-500">Pilih barang untuk melihat riwayat perjalanan alur masuk dan keluar secara berurutan[cite: 1]</p>
+                    </div>
+
+                    <div class="max-w-md mb-8">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Pilih Item Barang</label>
+                        <select id="lacak-item-select" onchange="renderLacakTimeline()" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            <option value="">-- Pilih Barang yang Akan Dilacak --</option>
+                        </select>
+                    </div>
+
+                    <!-- Timeline output -->
+                    <div id="lacak-content" class="hidden space-y-6">
+                        <div class="bg-brand-50/50 p-4 rounded-2xl border border-brand-100 flex flex-wrap gap-6 items-center justify-between">
+                            <div>
+                                <h4 id="lacak-title" class="font-bold text-slate-900 text-sm"></h4>
+                                <p id="lacak-sub" class="text-xs text-slate-500"></p>
+                            </div>
+                            <div class="flex gap-4 text-xs font-medium">
+                                <div class="bg-white px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600">Total Masuk: <span id="lacak-in" class="font-bold text-blue-600"></span></div>
+                                <div class="bg-white px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600">Total Keluar: <span id="lacak-out" class="font-bold text-amber-600"></span></div>
+                                <div class="bg-white px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600">Sisa Stok: <span id="lacak-stock" class="font-bold text-emerald-600"></span></div>
+                            </div>
+                        </div>
+
+                        <div class="relative border-l-2 border-slate-200 ml-4 space-y-6 py-2" id="lacak-timeline">
+                            <!-- Timeline nodes rendered by JS -->
+                        </div>
+                    </div>
+
+                    <div id="lacak-empty" class="py-12 text-center text-slate-400 text-xs">
+                        Silakan pilih item pada dropdown di atas untuk menampilkan jejak historis transaksi[cite: 1].
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Modal for Viewing Compressed Photo -->
+    <div id="photo-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-4 relative shadow-2xl transform scale-95 transition-transform duration-300" id="photo-modal-content">
+            <button onclick="closePhotoModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 bg-slate-100 p-1.5 rounded-full transition z-10">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+            <img id="modal-img" src="" alt="Detail Foto" class="w-full max-h-[75vh] object-contain rounded-xl">
+        </div>
+    </div>
+
+    <!-- Modal for Edit Master Item (Dashboard) -->
+    <div id="edit-item-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative shadow-2xl transform scale-95 transition-transform duration-300" id="edit-item-modal-content">
+            <div class="flex items-center gap-3 mb-4 pb-4 border-b border-slate-100">
+                <div class="p-2 bg-brand-50 text-brand-600 rounded-xl"><i data-lucide="pencil" class="w-5 h-5"></i></div>
+                <div>
+                    <h3 class="font-bold text-slate-900 text-sm">Edit Data Barang Master</h3>
+                    <p class="text-[11px] text-slate-500">Ubah nama dan merek barang untuk seluruh riwayat[cite: 1]</p>
+                </div>
+                <button onclick="closeEditItemMasterModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 p-1.5 rounded-lg transition">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <form id="form-edit-item-master" onsubmit="handleEditItemMasterSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Nama Barang <span class="text-rose-500">*</span></label>
+                    <input type="text" id="edit-master-name" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Merek / Tipe Barang</label>
+                    <input type="text" id="edit-master-brand" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none transition-all">
+                </div>
+                <p class="text-[10px] text-amber-700 bg-amber-50 p-2.5 rounded-lg border border-amber-200/60">
+                    ⚠️ Mengubah nama atau merek di sini akan secara otomatis memperbarui seluruh data transaksi terkait di Cloud[cite: 1].
+                </p>
+                <div class="pt-2 flex justify-end gap-3">
+                    <button type="button" onclick="closeEditItemMasterModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Batal</button>
+                    <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-6 rounded-xl text-xs transition-colors shadow-md shadow-brand-600/20">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK & App Logic Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // ==========================================
+        // GANTI DENGAN KONFIGURASI FIREBASE ANDA
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- State Management ---
+        let transactions = [];
+        let inventoryItems = {}; 
+        let currentCompressedImage = null;
+        let currentEditItemKey = null;
+
+        const initialTransactions = [
+            { id: 'TRX-101', type: 'inbound', date: '2026-07-01', itemName: 'Laptop Asus Zenbook', itemBrand: 'UX3402 Core i7', qty: 10, price: 14500000, vendor: 'PT. Asus Indonesia', notes: 'Pengadaan baru Q3', photo: '' },
+            { id: 'TRX-102', type: 'inbound', date: '2026-07-05', itemName: 'Monitor Dell 27"', itemBrand: 'P2722H', qty: 15, price: 3200000, vendor: 'CV. Tech Solution', notes: 'Tambahan layar IT', photo: '' },
+            { id: 'TRX-103', type: 'outbound', date: '2026-07-10', itemName: 'Laptop Asus Zenbook', itemBrand: 'UX3402 Core i7', qty: 3, dept: 'Divisi Software Engineering', notes: 'Laptop kerja dev baru' },
+            { id: 'TRX-104', type: 'outbound', date: '2026-07-12', itemName: 'Monitor Dell 27"', itemBrand: 'P2722H', qty: 4, dept: 'Divisi Marketing', notes: 'Fasilitas tim desain' }
+        ];
+
+        // Load Data from Firebase Firestore
+        async function loadData() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "transactions"));
+                transactions = [];
+                querySnapshot.forEach((docSnap) => {
+                    transactions.push(docSnap.data());
+                });
+
+                // If empty in cloud, initialize with sample data
+                if (transactions.length === 0) {
+                    transactions = [...initialTransactions];
+                    for (const trx of transactions) {
+                        await setDoc(doc(db, "transactions", trx.id), trx);
+                    }
+                }
+
+                // Update UI Cloud Status Connected
+                document.getElementById('status-text').textContent = 'Terhubung Firebase Cloud';
+                document.getElementById('status-dot').className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+            } catch (e) {
+                console.error("Error loading from Firestore:", e);
+                document.getElementById('status-text').textContent = 'Gagal Koneksi Cloud';
+                document.getElementById('status-dot').className = 'w-2 h-2 rounded-full bg-rose-500';
+                showToast('Gagal memuat data dari Firebase Cloud', 'error');
+                transactions = [...initialTransactions];
+            }
+            recalculateInventory();
+            renderDashboard();
+        }
+
+        // Save / Upsert single transaction to Firestore
+        async function saveTransactionToCloud(trx) {
+            try {
+                await setDoc(doc(db, "transactions", trx.id), trx);
+            } catch (e) {
+                console.error("Error saving to Firestore:", e);
+                showToast('Gagal menyimpan ke Cloud', 'error');
+            }
+        }
+
+        // Delete transaction from Firestore
+        async function deleteTransactionFromCloud(id) {
+            try {
+                await deleteDoc(doc(db, "transactions", id));
+            } catch (e) {
+                console.error("Error deleting from Firestore:", e);
+                showToast('Gagal menghapus dari Cloud', 'error');
+            }
+        }
+
+        function recalculateInventory() {
+            inventoryItems = {};
+
+            transactions.forEach(trx => {
+                const brandStr = trx.itemBrand ? trx.itemBrand.trim() : '';
+                const key = `${trx.itemName.trim()} | ${brandStr || '-'}`;
+
+                if (!inventoryItems[key]) {
+                    inventoryItems[key] = {
+                        key: key,
+                        name: trx.itemName.trim(),
+                        brand: brandStr,
+                        totalIn: 0,
+                        totalOut: 0,
+                        currentStock: 0,
+                        lastPrice: 0,
+                        totalValue: 0
+                    };
+                }
+
+                if (trx.type === 'inbound') {
+                    inventoryItems[key].totalIn += Number(trx.qty);
+                    inventoryItems[key].lastPrice = Number(trx.price) || inventoryItems[key].lastPrice;
+                } else if (trx.type === 'outbound') {
+                    inventoryItems[key].totalOut += Number(trx.qty);
+                }
+            });
+
+            Object.values(inventoryItems).forEach(item => {
+                item.currentStock = item.totalIn - item.totalOut;
+                item.totalValue = item.currentStock * item.lastPrice;
+            });
+
+            populateOutboundSelect();
+            populateLacakSelect();
+        }
+
+        // --- Helper Functions ---
+        window.formatRupiah = function(number) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        }
+
+        window.formatDate = function(dateString) {
+            if(!dateString) return '-';
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        }
+
+        window.showToast = function(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-slate-900 text-white border-emerald-500' : 'bg-rose-900 text-white border-rose-500';
+            const icon = type === 'success' ? 'check-circle' : 'alert-circle';
+
+            toast.className = `pointer-events-auto flex items-center gap-2 px-4 py-3 rounded-xl border-l-4 shadow-xl text-xs transform transition-all duration-300 translate-y-2 opacity-0 ${bgClass}`;
+            toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            lucide.createIcons({ root: toast });
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- Navigation ---
+        window.switchTab = function(tabId) {
+            const pages = ['dashboard', 'masuk', 'distribusi', 'laporan', 'lacak'];
+            pages.forEach(p => {
+                document.getElementById(`page-${p}`).classList.add('hidden');
+                const navBtn = document.getElementById(`side-${p}`);
+                if (navBtn) {
+                    navBtn.className = "side-nav-btn w-full px-4 py-3 rounded-xl text-xs font-medium transition-all duration-200 flex items-center gap-3 hover:bg-slate-800 text-slate-400 hover:text-slate-100";
+                }
+            });
+
+            document.getElementById(`page-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`side-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = "side-nav-btn w-full px-4 py-3 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center gap-3 bg-brand-600 text-white shadow-md shadow-brand-600/20";
+            }
+
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.add('hidden');
+
+            if (tabId === 'dashboard') renderDashboard();
+            if (tabId === 'masuk') renderInboundTable();
+            if (tabId === 'distribusi') renderOutboundTable();
+            if (tabId === 'laporan') renderLaporan();
+            if (tabId === 'lacak') renderLacakTimeline();
+        }
+
+        window.toggleMobileSidebar = function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        // --- Feature: Dashboard ---
+        window.renderDashboard = function() {
+            const tbody = document.getElementById('dash-stock-tbody');
+            const searchTerm = (document.getElementById('dash-search').value || '').toLowerCase();
+            tbody.innerHTML = '';
+
+            let totalItems = 0;
+            let totalStock = 0;
+            let totalOut = 0;
+            let totalValue = 0;
+
+            const itemsArray = Object.values(inventoryItems);
+            
+            itemsArray.forEach(item => {
+                totalItems++;
+                totalStock += item.currentStock;
+                totalOut += item.totalOut;
+                totalValue += item.totalValue;
+
+                if (item.name.toLowerCase().includes(searchTerm) || (item.brand && item.brand.toLowerCase().includes(searchTerm))) {
+                    const statusClass = item.currentStock <= 5 ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-emerald-600 bg-emerald-50 border-emerald-200';
+                    const statusText = item.currentStock <= 5 ? 'Low Stock' : 'Tersedia';
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50 transition-colors group';
+                    tr.innerHTML = `
+                        <td class="py-3 px-4 whitespace-nowrap font-medium text-slate-800">${item.name}</td>
+                        <td class="py-3 px-4 whitespace-nowrap text-slate-500">${item.brand || '-'}</td>
+                        <td class="py-3 px-4 whitespace-nowrap text-right text-blue-600 font-medium">${item.totalIn}</td>
+                        <td class="py-3 px-4 whitespace-nowrap text-right text-amber-600 font-medium">${item.totalOut}</td>
+                        <td class="py-3 px-4 whitespace-nowrap text-right font-bold text-slate-800">${item.currentStock}</td>
+                        <td class="py-3 px-4 whitespace-nowrap text-center">
+                            <span class="px-2.5 py-1 text-[10px] font-semibold rounded-full border ${statusClass}">${statusText}</span>
+                        </td>
+                        <td class="py-3 px-4 whitespace-nowrap text-center">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button onclick="openEditItemMasterModal('${item.key}')" class="flex items-center gap-1 py-1 px-2.5 text-[10px] font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-lg transition border border-brand-200" title="Edit Data Barang">
+                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit
+                                </button>
+                                <button onclick="deleteMasterItem('${item.key}')" class="flex items-center gap-1 py-1 px-2.5 text-[10px] font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition border border-rose-200" title="Hapus Data Barang">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+
+            if (itemsArray.length === 0 || tbody.innerHTML === '') {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 text-xs">Belum ada data barang[cite: 1].</td></tr>`;
+            }
+
+            lucide.createIcons({ root: tbody });
+
+            document.getElementById('stat-total-items').textContent = totalItems;
+            document.getElementById('stat-total-stock').textContent = totalStock;
+            document.getElementById('stat-total-out').textContent = totalOut;
+            document.getElementById('stat-total-value').textContent = formatRupiah(totalValue);
+        }
+
+        window.openEditItemMasterModal = function(key) {
+            const item = inventoryItems[key];
+            if(!item) return;
+            
+            currentEditItemKey = key;
+            document.getElementById('edit-master-name').value = item.name;
+            document.getElementById('edit-master-brand').value = item.brand || '';
+            
+            const modal = document.getElementById('edit-item-modal');
+            const content = document.getElementById('edit-item-modal-content');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+            lucide.createIcons({ root: modal });
+        }
+
+        window.deleteMasterItem = async function(key) {
+            const item = inventoryItems[key];
+            if(!item) return;
+
+            if (confirm(`Apakah Anda yakin ingin menghapus barang "${item.name}" beserta seluruh riwayat transaksinya dari Cloud?`)) {
+                const targets = transactions.filter(trx => {
+                    const brandStr = trx.itemBrand ? trx.itemBrand.trim() : '';
+                    const tKey = `${trx.itemName.trim()} | ${brandStr || '-'}`;
+                    return tKey === key;
+                });
+
+                for (const t of targets) {
+                    await deleteTransactionFromCloud(t.id);
+                }
+
+                transactions = transactions.filter(trx => {
+                    const brandStr = trx.itemBrand ? trx.itemBrand.trim() : '';
+                    const tKey = `${trx.itemName.trim()} | ${brandStr || '-'}`;
+                    return tKey !== key;
+                });
+
+                recalculateInventory();
+                renderDashboard();
+                showToast(`Barang "${item.name}" dan seluruh riwayatnya berhasil dihapus`);
+            }
+        }
+
+        window.closeEditItemMasterModal = function() {
+            const modal = document.getElementById('edit-item-modal');
+            const content = document.getElementById('edit-item-modal-content');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+            currentEditItemKey = null;
+        }
+
+        window.handleEditItemMasterSubmit = async function(e) {
+            e.preventDefault();
+            const oldKey = currentEditItemKey;
+            if(!oldKey) return;
+
+            const newName = document.getElementById('edit-master-name').value.trim();
+            const newBrand = document.getElementById('edit-master-brand').value.trim();
+
+            if(!newName) {
+                showToast('Nama barang tidak boleh kosong', 'error');
+                return;
+            }
+
+            for (let trx of transactions) {
+                const key = `${trx.itemName.trim()} | ${trx.itemBrand ? trx.itemBrand.trim() : '-'}`;
+                if(key === oldKey) {
+                    trx.itemName = newName;
+                    trx.itemBrand = newBrand;
+                    await saveTransactionToCloud(trx);
+                }
+            }
+
+            recalculateInventory();
+            closeEditItemMasterModal();
+            renderDashboard();
+            showToast('Informasi barang master berhasil diperbarui di Cloud!');
+        }
+
+        // --- Image Compression Helper ---
+        window.handleImageUpload = function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const max_size = 600;
+
+                    if (width > height) {
+                        if (width > max_size) {
+                            height *= max_size / width;
+                            width = max_size;
+                        }
+                    } else {
+                        if (height > max_size) {
+                            width *= max_size / height;
+                            height = max_size;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    currentCompressedImage = canvas.toDataURL('image/jpeg', 0.6);
+                    document.getElementById('photo-preview').src = currentCompressedImage;
+                    document.getElementById('photo-preview-container').classList.remove('hidden');
+                    document.getElementById('photo-icon').classList.add('hidden');
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- Feature: Inbound (Barang Masuk) ---
+        window.handleInboundSubmit = async function(e) {
+            e.preventDefault();
+            const docId = document.getElementById('in-doc-id').value;
+            const date = document.getElementById('in-date').value;
+            const name = document.getElementById('in-name').value.trim();
+            const brand = document.getElementById('in-brand').value.trim();
+            const qty = Number(document.getElementById('in-qty').value);
+            const price = Number(document.getElementById('in-price').value);
+            const vendor = document.getElementById('in-vendor').value.trim();
+            const notes = document.getElementById('in-notes').value.trim();
+
+            let targetTrx;
+            if (docId) {
+                const idx = transactions.findIndex(t => t.id === docId);
+                if (idx !== -1) {
+                    transactions[idx] = {
+                        ...transactions[idx],
+                        date, itemName: name, itemBrand: brand, qty, price, vendor, notes,
+                        photo: currentCompressedImage || transactions[idx].photo
+                    };
+                    targetTrx = transactions[idx];
+                    showToast('Data barang masuk berhasil diperbarui!');
+                }
+            } else {
+                targetTrx = {
+                    id: 'IN-' + Date.now().toString().slice(-6),
+                    type: 'inbound',
+                    date, itemName: name, itemBrand: brand, qty, price, vendor, notes,
+                    photo: currentCompressedImage || ''
+                };
+                transactions.unshift(targetTrx);
+                showToast('Barang masuk berhasil disimpan ke Cloud!');
+            }
+
+            await saveTransactionToCloud(targetTrx);
+            recalculateInventory();
+            resetInboundForm();
+            renderInboundTable();
+        }
+
+        window.resetInboundForm = function() {
+            document.getElementById('form-inbound').reset();
+            document.getElementById('in-doc-id').value = '';
+            document.getElementById('in-date').value = new Date().toISOString().split('T')[0];
+            currentCompressedImage = null;
+            document.getElementById('photo-preview-container').classList.add('hidden');
+            document.getElementById('photo-icon').classList.remove('hidden');
+            document.getElementById('form-masuk-title').textContent = 'Input Barang Masuk';
+            document.getElementById('btn-cancel-inbound').classList.add('hidden');
+        }
+
+        window.renderInboundTable = function() {
+            const tbody = document.getElementById('inbound-tbody');
+            const search = (document.getElementById('inbound-search').value || '').toLowerCase();
+            tbody.innerHTML = '';
+
+            const inbounds = transactions.filter(t => t.type === 'inbound' && 
+                (t.itemName.toLowerCase().includes(search) || t.vendor.toLowerCase().includes(search) || (t.itemBrand && t.itemBrand.toLowerCase().includes(search))));
+
+            inbounds.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition';
+                
+                const photoThumb = item.photo ? 
+                    `<img src="${item.photo}" onclick="openPhotoModal('${item.photo}')" class="w-9 h-9 object-cover rounded-lg cursor-pointer border border-slate-200 hover:scale-105 transition">` :
+                    `<div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400"><i data-lucide="image" class="w-4 h-4"></i></div>`;
+
+                tr.innerHTML = `
+                    <td class="py-3 px-3">${photoThumb}</td>
+                    <td class="py-3 px-3">
+                        <p class="font-bold text-slate-800">${item.itemName}</p>
+                        <p class="text-[10px] text-slate-400">${formatDate(item.date)}</p>
+                    </td>
+                    <td class="py-3 px-3 text-slate-500">${item.itemBrand || '-'}</td>
+                    <td class="py-3 px-3 font-semibold text-slate-700">${item.qty}</td>
+                    <td class="py-3 px-3 text-slate-600">${formatRupiah(item.price)}</td>
+                    <td class="py-3 px-3 text-slate-600">${item.vendor}</td>
+                    <td class="py-3 px-3 text-center">
+                        <div class="flex items-center justify-center gap-1">
+                            <button onclick="editInbound('${item.id}')" class="p-1 text-slate-500 hover:text-brand-600 rounded-lg hover:bg-slate-100" title="Edit"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="deleteTransaction('${item.id}')" class="p-1 text-slate-500 hover:text-rose-600 rounded-lg hover:bg-slate-100" title="Hapus"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if (inbounds.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">Tidak ada data transaksi masuk[cite: 1].</td></tr>`;
+            }
+
+            lucide.createIcons({ root: tbody });
+        }
+
+        window.editInbound = function(id) {
+            const item = transactions.find(t => t.id === id);
+            if (!item) return;
+
+            document.getElementById('in-doc-id').value = item.id;
+            document.getElementById('in-date').value = item.date;
+            document.getElementById('in-name').value = item.itemName;
+            document.getElementById('in-brand').value = item.itemBrand || '';
+            document.getElementById('in-qty').value = item.qty;
+            document.getElementById('in-price').value = item.price;
+            document.getElementById('in-vendor').value = item.vendor;
+            document.getElementById('in-notes').value = item.notes || '';
+
+            if (item.photo) {
+                currentCompressedImage = item.photo;
+                document.getElementById('photo-preview').src = item.photo;
+                document.getElementById('photo-preview-container').classList.remove('hidden');
+                document.getElementById('photo-icon').classList.add('hidden');
+            } else {
+                currentCompressedImage = null;
+                document.getElementById('photo-preview-container').classList.add('hidden');
+                document.getElementById('photo-icon').classList.remove('hidden');
+            }
+
+            document.getElementById('form-masuk-title').textContent = 'Edit Barang Masuk';
+            document.getElementById('btn-cancel-inbound').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- Feature: Outbound (Distribusi Barang) ---
+        function populateOutboundSelect() {
+            const select = document.getElementById('out-item-select');
+            select.innerHTML = '<option value="">-- Pilih Barang --</option>';
+
+            Object.values(inventoryItems).forEach(item => {
+                if (item.currentStock > 0) {
+                    const opt = document.createElement('option');
+                    opt.value = item.key;
+                    opt.textContent = `${item.name} ${item.brand ? '(' + item.brand + ')' : ''} - Stok: ${item.currentStock}`;
+                    select.appendChild(opt);
+                }
+            });
+        }
+
+        window.updateOutboundMaxQty = function() {
+            const key = document.getElementById('out-item-select').value;
+            const info = document.getElementById('out-stock-info');
+            const qtyInput = document.getElementById('out-qty');
+
+            if (key && inventoryItems[key]) {
+                const stock = inventoryItems[key].currentStock;
+                info.textContent = `Sisa stok tersedia: ${stock} unit`;
+                info.className = "text-[11px] text-emerald-600 font-medium mt-1";
+                qtyInput.max = stock;
+            } else {
+                info.textContent = "Sisa stok tersedia: -";
+                info.className = "text-[11px] text-slate-400 mt-1";
+                qtyInput.removeAttribute('max');
+            }
+        }
+
+        window.handleOutboundSubmit = async function(e) {
+            e.preventDefault();
+            const date = document.getElementById('out-date').value;
+            const dept = document.getElementById('out-dept').value.trim();
+            const itemKey = document.getElementById('out-item-select').value;
+            const qty = Number(document.getElementById('out-qty').value);
+            const notes = document.getElementById('out-notes').value.trim();
+
+            if (!itemKey || !inventoryItems[itemKey]) {
+                showToast('Silakan pilih barang!', 'error');
+                return;
+            }
+
+            const master = inventoryItems[itemKey];
+
+            if (qty > master.currentStock) {
+                showToast(`Stok tidak mencukupi! Maksimal pengeluaran: ${master.currentStock}`, 'error');
+                return;
+            }
+
+            const newOut = {
+                id: 'OUT-' + Date.now().toString().slice(-6),
+                type: 'outbound',
+                date,
+                itemName: master.name,
+                itemBrand: master.brand,
+                qty,
+                dept,
+                notes
+            };
+
+            transactions.unshift(newOut);
+            await saveTransactionToCloud(newOut);
+            recalculateInventory();
+
+            document.getElementById('form-outbound').reset();
+            document.getElementById('out-date').value = new Date().toISOString().split('T')[0];
+            updateOutboundMaxQty();
+            renderOutboundTable();
+            showToast('Pengeluaran barang berhasil dicatat ke Cloud!');
+        }
+
+        window.renderOutboundTable = function() {
+            const tbody = document.getElementById('outbound-tbody');
+            const search = (document.getElementById('outbound-search').value || '').toLowerCase();
+            tbody.innerHTML = '';
+
+            const outbounds = transactions.filter(t => t.type === 'outbound' && 
+                (t.itemName.toLowerCase().includes(search) || t.dept.toLowerCase().includes(search)));
+
+            outbounds.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition';
+                tr.innerHTML = `
+                    <td class="py-3 px-3 whitespace-nowrap">${formatDate(item.date)}</td>
+                    <td class="py-3 px-3 font-semibold text-slate-800">${item.itemName} <span class="text-[10px] font-normal text-slate-400">(${item.itemBrand || '-'})</span></td>
+                    <td class="py-3 px-3 text-slate-600">${item.dept}</td>
+                    <td class="py-3 px-3 font-bold text-amber-600">${item.qty}</td>
+                    <td class="py-3 px-3 text-slate-500">${item.notes || '-'}</td>
+                    <td class="py-3 px-3 text-center">
+                        <button onclick="deleteTransaction('${item.id}')" class="p-1 text-slate-500 hover:text-rose-600 rounded-lg hover:bg-slate-100" title="Hapus"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if (outbounds.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">Tidak ada riwayat pengeluaran barang[cite: 1].</td></tr>`;
+            }
+
+            lucide.createIcons({ root: tbody });
+        }
+
+        window.deleteTransaction = async function(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus catatan transaksi ini dari Cloud?')) {
+                transactions = transactions.filter(t => t.id !== id);
+                await deleteTransactionFromCloud(id);
+                recalculateInventory();
+                renderInboundTable();
+                renderOutboundTable();
+                renderDashboard();
+                showToast('Transaksi telah dihapus dari Cloud');
+            }
+        }
+
+        // --- Feature: Laporan Bulanan ---
+        window.renderLaporan = function() {
+            const monthInput = document.getElementById('report-month');
+            if (!monthInput.value) {
+                const now = new Date();
+                const m = String(now.getMonth() + 1).padStart(2, '0');
+                monthInput.value = `${now.getFullYear()}-${m}`;
+            }
+
+            const selectedMonth = monthInput.value;
+            const tbody = document.getElementById('report-tbody');
+            tbody.innerHTML = '';
+
+            let totalIn = 0;
+            let totalOut = 0;
+            let totalValueIn = 0;
+
+            const filtered = transactions.filter(t => t.date && t.date.startsWith(selectedMonth));
+
+            const dateObj = new Date(selectedMonth + "-01");
+            const monthName = dateObj.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+            document.getElementById('print-period-title').textContent = `Periode: ${monthName}`;
+            document.getElementById('print-date-stamp').textContent = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            filtered.forEach(item => {
+                const tr = document.createElement('tr');
+                const isIn = item.type === 'inbound';
+
+                if (isIn) {
+                    totalIn += Number(item.qty);
+                    totalValueIn += Number(item.qty) * Number(item.price || 0);
+                } else {
+                    totalOut += Number(item.qty);
+                }
+
+                tr.innerHTML = `
+                    <td class="py-2 px-3 border border-slate-200 whitespace-nowrap">${formatDate(item.date)}</td>
+                    <td class="py-2 px-3 border border-slate-200 font-semibold ${isIn ? 'text-blue-600' : 'text-amber-600'}">${isIn ? 'Barang Masuk' : 'Distribusi Out'}</td>
+                    <td class="py-2 px-3 border border-slate-200 font-medium text-slate-800">${item.itemName}</td>
+                    <td class="py-2 px-3 border border-slate-200 text-slate-500">${item.itemBrand || '-'}</td>
+                    <td class="py-2 px-3 border border-slate-200 text-right font-bold">${item.qty}</td>
+                    <td class="py-2 px-3 border border-slate-200">${isIn ? item.vendor : item.dept}</td>
+                    <td class="py-2 px-3 border border-slate-200 text-slate-500">${item.notes || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">Tidak ada aktivitas transaksi pada bulan terpilih[cite: 1].</td></tr>`;
+            }
+
+            document.getElementById('report-sum-in').textContent = totalIn;
+            document.getElementById('report-sum-out').textContent = totalOut;
+            document.getElementById('report-sum-value').textContent = formatRupiah(totalValueIn);
+        }
+
+        // --- Feature: Lacak Barang ---
+        function populateLacakSelect() {
+            const select = document.getElementById('lacak-item-select');
+            select.innerHTML = '<option value="">-- Pilih Barang yang Akan Dilacak --</option>';
+
+            Object.values(inventoryItems).forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.key;
+                opt.textContent = `${item.name} ${item.brand ? '(' + item.brand + ')' : ''}`;
+                select.appendChild(opt);
+            });
+        }
+
+        window.renderLacakTimeline = function() {
+            const selectKey = document.getElementById('lacak-item-select').value;
+            const content = document.getElementById('lacak-content');
+            const empty = document.getElementById('lacak-empty');
+            const timeline = document.getElementById('lacak-timeline');
+
+            if (!selectKey || !inventoryItems[selectKey]) {
+                content.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            content.classList.remove('hidden');
+            empty.classList.add('hidden');
+
+            const master = inventoryItems[selectKey];
+            
+            // Generate Header Content HTML with Download Button
+            document.getElementById('lacak-title').textContent = master.name;
+            document.getElementById('lacak-sub').textContent = `Merek/Tipe: ${master.brand || 'Umum'}`;
+            document.getElementById('lacak-in').textContent = master.totalIn;
+            document.getElementById('lacak-out').textContent = master.totalOut;
+            document.getElementById('lacak-stock').textContent = master.currentStock;
+            
+            // Add download button if not exists
+            let downloadArea = document.getElementById('lacak-download-area');
+            if (!downloadArea) {
+                downloadArea = document.createElement('div');
+                downloadArea.id = 'lacak-download-area';
+                downloadArea.className = 'mt-4 flex justify-end';
+                downloadArea.innerHTML = `<button onclick="downloadTimelineAsJPG()" class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl text-xs font-medium transition shadow-sm"><i data-lucide="download" class="w-4 h-4"></i> Unduh Kartu Stok (JPG)</button>`;
+                content.appendChild(downloadArea);
+                lucide.createIcons({ root: downloadArea });
+            }
+
+            const itemTrx = transactions.filter(t => {
+                const key = `${t.itemName.trim()} | ${t.itemBrand ? t.itemBrand.trim() : '-'}`;
+                return key === selectKey;
+            }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            timeline.innerHTML = '';
+            let runningBalance = 0;
+
+            itemTrx.forEach(trx => {
+                const isIn = trx.type === 'inbound';
+                if (isIn) runningBalance += Number(trx.qty);
+                else runningBalance -= Number(trx.qty);
+
+                const node = document.createElement('div');
+                node.className = 'relative pl-6';
+                node.innerHTML = `
+                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-2 border-white ${isIn ? 'bg-blue-500 ring-4 ring-blue-50' : 'bg-amber-500 ring-4 ring-amber-50'}"></div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 shadow-sm space-y-1">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="text-xs font-bold ${isIn ? 'text-blue-600' : 'text-amber-600'}">${isIn ? 'Penerimaan (Inbound)' : 'Penyaluran (Outbound)'}</span>
+                            <span class="text-[10px] text-slate-400 font-medium">${formatDate(trx.date)}</span>
+                        </div>
+                        <p class="text-xs font-semibold text-slate-800">
+                            ${isIn ? `Masuk: +${trx.qty} unit dari ${trx.vendor}` : `Keluar: -${trx.qty} unit ke ${trx.dept}`}
+                        </p>
+                        ${trx.price ? `<p class="text-[11px] text-slate-500">Harga Satuan: ${formatRupiah(trx.price)}</p>` : ''}
+                        ${trx.notes ? `<p class="text-[11px] text-slate-400 italic">" ${trx.notes} "</p>` : ''}
+                        <div class="pt-2 text-[10px] font-bold text-slate-600 border-t border-slate-200/60 flex justify-between">
+                            <span>Sisa Saldo Stok Setelah Transaksi:</span>
+                            <span class="text-brand-700 font-extrabold">${runningBalance} Unit</span>
+                        </div>
+                    </div>
+                `;
+                timeline.appendChild(node);
+            });
+
+            if (itemTrx.length === 0) {
+                timeline.innerHTML = `<div class="text-xs text-slate-400 pl-4">Belum ada riwayat transaksi[cite: 1].</div>`;
+            }
+        }
+
+        window.downloadTimelineAsJPG = async function() {
+            const content = document.getElementById('lacak-content');
+            try {
+                // Temporary hide the download button to not show it in the image
+                const btn = document.getElementById('lacak-download-area');
+                btn.classList.add('hidden');
+                
+                const canvas = await html2canvas(content, {
+                    backgroundColor: "#ffffff",
+                    scale: 2,
+                    logging: false
+                });
+                
+                const link = document.createElement('a');
+                link.download = `Kartu_Stok_${document.getElementById('lacak-title').textContent.replace(/\s+/g, '_')}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                link.click();
+                
+                btn.classList.remove('hidden');
+                showToast('Gambar berhasil diunduh!');
+            } catch (err) {
+                console.error("Gagal mengunduh gambar:", err);
+                showToast('Gagal mengunduh gambar', 'error');
+                document.getElementById('lacak-download-area').classList.remove('hidden');
+            }
+        }
+
+        // --- Photo Modal Controls ---
+        window.openPhotoModal = function(imgSrc) {
+            const modal = document.getElementById('photo-modal');
+            const content = document.getElementById('photo-modal-content');
+            document.getElementById('modal-img').src = imgSrc;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+            lucide.createIcons({ root: modal });
+        }
+
+        window.closePhotoModal = function() {
+            const modal = document.getElementById('photo-modal');
+            const content = document.getElementById('photo-modal-content');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        // --- On Application Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            document.getElementById('in-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('out-date').value = new Date().toISOString().split('T')[0];
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
