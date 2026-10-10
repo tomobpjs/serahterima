@@ -63,6 +63,37 @@
             .no-print { display: none !important; }
             body { background: white; color: black; }
             .print-area { width: 100%; margin: 0; padding: 0; box-shadow: none; }
+            
+            /* Setting ukuran kertas BAST menjadi separuh kertas A4 (A5: 148mm x 210mm) */
+            @page {
+                size: A5 portrait;
+                margin: 6mm;
+            }
+            #serah-terima-modal {
+                position: absolute !important;
+                inset: 0 !important;
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                z-index: 99999 !important;
+                display: block !important;
+                opacity: 1 !important;
+                overflow: visible !important;
+            }
+            #serah-terima-modal-content {
+                max-width: 100% !important;
+                width: 100% !important;
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 4mm !important;
+                transform: none !important;
+                font-size: 10px !important;
+            }
+            #serah-terima-modal-content h2 { font-size: 13px !important; }
+            #serah-terima-modal-content h3 { font-size: 11px !important; }
+            #serah-terima-modal-content table th, 
+            #serah-terima-modal-content table td { padding: 4px 6px !important; font-size: 9.5px !important; }
         }
     </style>
 </head>
@@ -361,7 +392,6 @@
                                 <input type="text" id="out-dept" placeholder="Contoh: Divisi IT / Ruang Rawat Inap" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
                             </div>
 
-                            <!-- Multi Item Section -->
                             <div class="space-y-3 pt-2">
                                 <div class="flex justify-between items-center">
                                     <label class="block text-xs font-semibold text-slate-700">Daftar Barang Diserahkan <span class="text-rose-500">*</span></label>
@@ -370,9 +400,7 @@
                                     </button>
                                 </div>
 
-                                <div id="outbound-items-container" class="space-y-3">
-                                    <!-- Dynamic rows inserted here -->
-                                </div>
+                                <div id="outbound-items-container" class="space-y-3"></div>
                             </div>
 
                             <div>
@@ -517,7 +545,6 @@
 
     <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- Modal for Viewing Compressed Photo -->
     <div id="photo-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl max-w-lg w-full p-4 relative shadow-2xl transform scale-95 transition-transform duration-300" id="photo-modal-content">
             <button onclick="closePhotoModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 bg-slate-100 p-1.5 rounded-full transition z-10">
@@ -527,7 +554,6 @@
         </div>
     </div>
 
-    <!-- Modal for Edit Master Item (Dashboard) -->
     <div id="edit-item-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 relative shadow-2xl transform scale-95 transition-transform duration-300" id="edit-item-modal-content">
             <div class="flex items-center gap-3 mb-4 pb-4 border-b border-slate-100">
@@ -561,59 +587,57 @@
         </div>
     </div>
 
-    <!-- Modal Preview & Cetak Bukti Serah Terima Barang -->
+    <!-- FORM BAST SIAP CETAK (Ukuran Separuh A4 / A5) -->
     <div id="serah-terima-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[110] hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl max-w-3xl w-full p-6 sm:p-8 relative shadow-2xl transform scale-95 transition-transform duration-300 my-auto print-area" id="serah-terima-modal-content">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 sm:p-8 relative shadow-2xl transform scale-95 transition-transform duration-300 my-auto print-area" id="serah-terima-modal-content">
             <button onclick="closeSerahTerimaModal()" class="no-print absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-xl transition">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
             <!-- KOP SURAT RUMAH SAKIT LENGKAP -->
-            <div class="border-b-4 border-slate-900 pb-4 mb-6 text-center relative">
+            <div class="border-b-4 border-slate-900 pb-3 mb-4 text-center relative">
                 <div class="flex items-center justify-center gap-3 mb-1">
                     <div class="text-center">
-                        <h2 class="text-base sm:text-xl font-extrabold text-brand-700 uppercase tracking-wide">RUMAH SAKIT UMUM DADI KELUARGA PURWOKERTO</h2>
-                        <p class="text-[11px] font-semibold text-slate-600">Bagian Rumah Tangga & Logistik</p>
+                        <h2 class="text-sm sm:text-base font-extrabold text-brand-700 uppercase tracking-wide">RUMAH SAKIT UMUM DADI KELUARGA PURWOKERTO</h2>
+                        <p class="text-[10px] font-semibold text-slate-600">Bagian Rumah Tangga & Logistik</p>
                     </div>
                 </div>
-                <p class="text-[10px] text-slate-500 mt-1">Jl.Sultan Agung No.8A Teluk - Purwokerto Selatan - Banyumas</p>
+                <p class="text-[9px] text-slate-500 mt-0.5">Jl.Sultan Agung No.8A Teluk - Purwokerto Selatan - Banyumas</p>
             </div>
 
             <!-- JUDUL SURAT -->
-            <div class="text-center mb-6">
-                <h3 class="font-extrabold text-slate-900 text-base uppercase underline tracking-wider">BERITA ACARA SERAH TERIMA BARANG (BAST)</h3>
-                <p class="text-xs font-semibold text-slate-600 mt-1" id="st-nomor-surat">Nomor: BAST / 2026 / RT-RSDK</p>
+            <div class="text-center mb-4">
+                <h3 class="font-extrabold text-slate-900 text-xs sm:text-sm uppercase underline tracking-wider">BERITA ACARA SERAH TERIMA BARANG (BAST)</h3>
+                <p class="text-[11px] font-semibold text-slate-600 mt-1" id="st-nomor-surat">Nomor: BAST / 2026 / RT-RSDK</p>
             </div>
 
             <!-- ISI KETERANGAN -->
-            <div class="text-xs text-slate-700 space-y-4 mb-6 leading-relaxed">
+            <div class="text-[11px] text-slate-700 space-y-3 mb-4 leading-relaxed">
                 <p>Pada hari ini tanggal <span id="st-date" class="font-bold text-slate-900"></span>, kami yang bertanda tangan di bawah ini telah melakukan penyerahan barang inventaris dari <strong>Bagian Rumah Tangga</strong> kepada unit penerima dengan rincian barang sebagai berikut:</p>
                 
-                <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
                     <div>
-                        <span class="text-[11px] text-slate-500 block">Unit Penerima:</span>
-                        <span id="st-dept" class="font-bold text-slate-900 text-sm"></span>
+                        <span class="text-[10px] text-slate-500 block">Unit Penerima:</span>
+                        <span id="st-dept" class="font-bold text-slate-900 text-xs"></span>
                     </div>
                     <div>
-                        <span class="text-[11px] text-slate-500 block">Keterangan / Keperluan:</span>
-                        <span id="st-notes" class="font-semibold text-slate-800"></span>
+                        <span class="text-[10px] text-slate-500 block">Keterangan / Keperluan:</span>
+                        <span id="st-notes" class="font-semibold text-slate-800 text-[11px]"></span>
                     </div>
                 </div>
 
                 <!-- TABEL MULTI BARANG SERAH TERIMA -->
                 <div class="overflow-x-auto border border-slate-300 rounded-xl">
-                    <table class="w-full text-left text-xs border-collapse">
+                    <table class="w-full text-left text-[11px] border-collapse">
                         <thead>
                             <tr class="bg-slate-100 text-slate-800 font-bold uppercase border-b border-slate-300">
-                                <th class="py-2.5 px-3 border-r border-slate-300 text-center w-10">No</th>
-                                <th class="py-2.5 px-3 border-r border-slate-300">Nama Barang</th>
-                                <th class="py-2.5 px-3 border-r border-slate-300">Merek / Tipe</th>
-                                <th class="py-2.5 px-3 text-center w-24">Jumlah</th>
+                                <th class="py-2 px-2.5 border-r border-slate-300 text-center w-8">No</th>
+                                <th class="py-2 px-2.5 border-r border-slate-300">Nama Barang</th>
+                                <th class="py-2 px-2.5 border-r border-slate-300">Merek / Tipe</th>
+                                <th class="py-2 px-2.5 text-center w-20">Jumlah</th>
                             </tr>
                         </thead>
-                        <tbody id="st-items-tbody" class="divide-y divide-slate-200">
-                            <!-- Rows loaded dynamically -->
-                        </tbody>
+                        <tbody id="st-items-tbody" class="divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
 
@@ -621,39 +645,39 @@
             </div>
 
             <!-- KOLOM TANDA TANGAN -->
-            <div class="grid grid-cols-2 gap-8 text-center text-xs mt-10 pt-4">
-                <div class="space-y-16">
+            <div class="grid grid-cols-2 gap-6 text-center text-[11px] mt-6 pt-2">
+                <div class="space-y-12">
                     <div>
                         <p class="font-medium text-slate-600">Pihak Yang Menyerahkan,</p>
-                        <p class="font-bold text-slate-900 mt-1">Bagian Rumah Tangga</p>
+                        <p class="font-bold text-slate-900 mt-0.5">Bagian Rumah Tangga</p>
                     </div>
-                    <div class="pt-2">
-                        <p class="font-bold text-slate-900 border-b border-slate-400 inline-block px-8 pb-0.5">( ........................................ )</p>
-                        <p class="text-[10px] text-slate-500 mt-1">NIK. ........................................</p>
+                    <div class="pt-1">
+                        <p class="font-bold text-slate-900 border-b border-slate-400 inline-block px-6 pb-0.5 text-xs">( ........................................ )</p>
+                        <p class="text-[9px] text-slate-500 mt-0.5">NIK. ........................................</p>
                     </div>
                 </div>
 
-                <div class="space-y-16">
+                <div class="space-y-12">
                     <div>
                         <p class="font-medium text-slate-600">Pihak Yang Menerima,</p>
-                        <p id="st-dept-sign" class="font-bold text-slate-900 mt-1">Unit Penerima</p>
+                        <p id="st-dept-sign" class="font-bold text-slate-900 mt-0.5">Unit Penerima</p>
                     </div>
-                    <div class="pt-2">
-                        <p class="font-bold text-slate-900 border-b border-slate-400 inline-block px-8 pb-0.5">( ........................................ )</p>
-                        <p class="text-[10px] text-slate-500 mt-1">NIK. ........................................</p>
+                    <div class="pt-1">
+                        <p class="font-bold text-slate-900 border-b border-slate-400 inline-block px-6 pb-0.5 text-xs">( ........................................ )</p>
+                        <p class="text-[9px] text-slate-500 mt-0.5">NIK. ........................................</p>
                     </div>
                 </div>
             </div>
 
             <!-- KETERANGAN DIGITAL DI KIRI BAWAH -->
-            <div class="mt-6 pt-2 text-[8px] text-slate-500 italic text-left">
+            <div class="mt-4 pt-1 text-[7.5px] text-slate-500 italic text-left">
                 dokumen ini dicetak otomatis digital melalui Portal Inventory Bagian Rumah Tangga
             </div>
 
             <!-- TOMBOL AKSI MODAL -->
-            <div class="mt-8 pt-4 border-t border-slate-100 flex justify-end gap-3 no-print">
-                <button onclick="closeSerahTerimaModal()" class="px-4 py-2.5 rounded-xl text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition">Tutup</button>
-                <button onclick="window.print()" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 px-6 rounded-xl text-xs transition flex items-center gap-2 shadow-md shadow-brand-600/20">
+            <div class="mt-6 pt-3 border-t border-slate-100 flex justify-end gap-3 no-print">
+                <button onclick="closeSerahTerimaModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition">Tutup</button>
+                <button onclick="window.print()" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-5 rounded-xl text-xs transition flex items-center gap-2 shadow-md shadow-brand-600/20">
                     <i data-lucide="printer" class="w-4 h-4"></i> Cetak Bukti Serah Terima
                 </button>
             </div>
@@ -1378,10 +1402,10 @@
             itemList.forEach((item, idx) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="py-2.5 px-3 border-r border-slate-300 text-center font-semibold text-slate-600">${idx + 1}</td>
-                    <td class="py-2.5 px-3 border-r border-slate-300 font-bold text-slate-900">${item.itemName}</td>
-                    <td class="py-2.5 px-3 border-r border-slate-300 text-slate-600">${item.itemBrand || '-'}</td>
-                    <td class="py-2.5 px-3 text-center font-bold text-brand-700">${item.qty} Unit</td>
+                    <td class="py-2 px-2.5 border-r border-slate-300 text-center font-semibold text-slate-600">${idx + 1}</td>
+                    <td class="py-2 px-2.5 border-r border-slate-300 font-bold text-slate-900">${item.itemName}</td>
+                    <td class="py-2 px-2.5 border-r border-slate-300 text-slate-600">${item.itemBrand || '-'}</td>
+                    <td class="py-2 px-2.5 text-center font-bold text-brand-700">${item.qty} Unit</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -1627,13 +1651,13 @@
                     }
                 } else if(trx.type === 'outbound') {
                     const itemList = trx.items || [{ itemName: trx.itemName, itemBrand: trx.itemBrand, qty: trx.qty }];
-                    itemList.forEach(it => {
-                        const matchKey = `${it.itemName.trim()} | ${(it.itemBrand || '-').trim()}`;
+                    itemList.forEach(item => {
+                        const matchKey = `${item.itemName.trim()} | ${(item.itemBrand || '-').trim()}`;
                         if(matchKey === key) {
                             itemEvents.push({
                                 date: trx.date,
                                 type: 'outbound',
-                                qty: it.qty,
+                                qty: item.qty,
                                 dept: trx.dept,
                                 notes: trx.notes
                             });
@@ -1644,39 +1668,42 @@
 
             itemEvents.sort((a,b) => new Date(a.date) - new Date(b.date));
 
-            itemEvents.forEach(trx => {
-                const isIn = trx.type === 'inbound';
-                const dotColor = isIn ? 'bg-blue-600 border-blue-200' : 'bg-amber-600 border-amber-200';
-                const badgeBg = isIn ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-amber-50 text-amber-700 border-amber-200';
-                const typeText = isIn ? 'BARANG MASUK (Diterima)' : `DIDISTRIBUSIKAN (${trx.dept})`;
-
+            itemEvents.forEach(ev => {
                 const div = document.createElement('div');
-                div.className = 'relative pl-6';
+                div.className = "relative pl-6";
+                const isInc = ev.type === 'inbound';
+                const badgeColor = isInc ? 'bg-blue-600 text-white' : 'bg-amber-600 text-white';
+                const typeText = isInc ? `BARANG MASUK (+${ev.qty})` : `BARANG KELUAR (-${ev.qty})`;
+                const infoText = isInc ? `Vendor: ${ev.vendor}` : `Penerima: ${ev.dept}`;
+
                 div.innerHTML = `
-                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-2 bg-white ${dotColor}"></div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-                        <div class="flex flex-wrap items-center justify-between gap-2">
-                            <span class="px-2.5 py-0.5 text-[10px] font-bold rounded-full border ${badgeBg}">${typeText}</span>
-                            <span class="text-xs font-semibold text-slate-500">${formatDate(trx.date)}</span>
+                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full ${isInc ? 'bg-blue-600' : 'bg-amber-600'} border-2 border-white shadow"></div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeColor}">${typeText}</span>
+                            <span class="text-[11px] text-slate-400 font-medium">${formatDate(ev.date)}</span>
                         </div>
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="text-slate-600 font-medium">Jumlah: <strong class="${isIn ? 'text-blue-600' : 'text-amber-600'} text-sm">${trx.qty} Unit</strong></span>
-                            <span class="text-slate-500">${isIn ? 'Vendor: ' + trx.vendor : 'Penerima: ' + trx.dept}</span>
-                        </div>
-                        ${trx.notes ? `<p class="text-xs text-slate-500 italic bg-white p-2 rounded-lg border border-slate-100">Catatan: ${trx.notes}</p>` : ''}
+                        <p class="text-xs font-semibold text-slate-800 mt-1">${infoText}</p>
+                        ${ev.notes ? `<p class="text-[11px] text-slate-500 mt-0.5">Catatan: ${ev.notes}</p>` : ''}
                     </div>
                 `;
                 timeline.appendChild(div);
             });
+
+            if(itemEvents.length === 0) {
+                timeline.innerHTML = `<div class="text-xs text-slate-400 pl-6">Belum ada riwayat transaksi untuk item ini.</div>`;
+            }
+            lucide.createIcons({ root: timeline });
         }
 
         window.onload = function() {
-            lucide.createIcons();
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('in-date').value = today;
-            document.getElementById('out-date').value = today;
-            initOutboundForm();
             loadData();
+            const today = new Date().toISOString().split('T')[0];
+            const inDate = document.getElementById('in-date');
+            const outDate = document.getElementById('out-date');
+            if(inDate) inDate.value = today;
+            if(outDate) outDate.value = today;
+            lucide.createIcons();
         }
     </script>
 </body>
