@@ -411,7 +411,7 @@
                                         <th class="py-3 px-3">Item Barang Diserahkan</th>
                                         <th class="py-3 px-3">Penerima / Dept</th>
                                         <th class="py-3 px-3 text-center">Total Item</th>
-                                        <th class="py-3 px-3 text-center">Aksi Serah Terima</th>
+                                        <th class="py-3 px-3 text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="outbound-tbody" class="divide-y divide-slate-100"></tbody>
@@ -583,27 +583,26 @@
                         <i data-lucide="cross" class="w-7 h-7"></i>
                     </div>
                     <div class="text-center">
-                        <h1 class="text-sm sm:text-base font-bold text-slate-800 tracking-wider uppercase">PEMERINTAH KABUPATEN / INSTANSI KESEHATAN</h1>
-                        <h2 class="text-base sm:text-xl font-extrabold text-brand-700 uppercase tracking-wide">RUMAH SAKIT UMUM DAERAH (RSUD)</h2>
-                        <p class="text-[11px] font-semibold text-slate-600">Bagian Rumah Tangga & Perlengkapan Inventaris</p>
+                        <h2 class="text-base sm:text-xl font-extrabold text-brand-700 uppercase tracking-wide">RUMAH SAKIT UMUM DADI KELUARGA PURWOKERTO</h2>
+                        <p class="text-[11px] font-semibold text-slate-600">Bagian Rumah Tangga</p>
                     </div>
                 </div>
-                <p class="text-[10px] text-slate-500 mt-1">Jl. Kesehatan No. 100 Telp. (0285) 123456 • Fax. (0285) 654321 • Email: rstangga@rsud.go.id</p>
+                <p class="text-[10px] text-slate-500 mt-1">Jl.Sultan Agung No.8A Purwokerto Selatan</p>
             </div>
 
             <!-- JUDUL SURAT -->
             <div class="text-center mb-6">
                 <h3 class="font-extrabold text-slate-900 text-base uppercase underline tracking-wider">BERITA ACARA SERAH TERIMA BARANG (BAST)</h3>
-                <p class="text-xs font-semibold text-slate-600 mt-1" id="st-nomor-surat">Nomor: BAST / 2026 / RT-RSUD</p>
+                <p class="text-xs font-semibold text-slate-600 mt-1" id="st-nomor-surat">Nomor: BAST / 2026 / RT-RSDK</p>
             </div>
 
             <!-- ISI KETERANGAN -->
             <div class="text-xs text-slate-700 space-y-4 mb-6 leading-relaxed">
-                <p>Pada hari ini tanggal <span id="st-date" class="font-bold text-slate-900"></span>, kami yang bertanda tangan di bawah ini telah melakukan penyerahan barang inventaris dari <strong>Bagian Rumah Tangga PT.RSDK</strong> kepada unit penerima dengan rincian barang sebagai berikut:</p>
+                <p>Pada hari ini tanggal <span id="st-date" class="font-bold text-slate-900"></span>, kami yang bertanda tangan di bawah ini telah melakukan penyerahan barang inventaris dari <strong>Bagian Rumah Tangga</strong> kepada unit penerima dengan rincian barang sebagai berikut:</p>
                 
                 <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
                     <div>
-                        <span class="text-[11px] text-slate-500 block">Unit / Departemen Penerima:</span>
+                        <span class="text-[11px] text-slate-500 block">Unit Penerima:</span>
                         <span id="st-dept" class="font-bold text-slate-900 text-sm"></span>
                     </div>
                     <div>
@@ -637,22 +636,22 @@
                 <div class="space-y-16">
                     <div>
                         <p class="font-medium text-slate-600">Pihak Yang Menyerahkan,</p>
-                        <p class="font-bold text-slate-900 mt-1">Bagian Rumah Tangga RS</p>
+                        <p class="font-bold text-slate-900 mt-1">Bagian Rumah Tangga</p>
                     </div>
                     <div class="pt-2">
                         <p class="font-bold text-slate-900 border-b border-slate-400 inline-block px-8 pb-0.5">( ........................................ )</p>
-                        <p class="text-[10px] text-slate-500 mt-1">NIP. ........................................</p>
+                        <p class="text-[10px] text-slate-500 mt-1">NIK. ........................................</p>
                     </div>
                 </div>
 
                 <div class="space-y-16">
                     <div>
                         <p class="font-medium text-slate-600">Pihak Yang Menerima,</p>
-                        <p id="st-dept-sign" class="font-bold text-slate-900 mt-1">Unit / Departemen</p>
+                        <p id="st-dept-sign" class="font-bold text-slate-900 mt-1">Unit Penerima</p>
                     </div>
                     <div class="pt-2">
                         <p class="font-bold text-slate-900 border-b border-slate-400 inline-block px-8 pb-0.5">( ........................................ )</p>
-                        <p class="text-[10px] text-slate-500 mt-1">NIP. ........................................</p>
+                        <p class="text-[10px] text-slate-500 mt-1">NIK. ........................................</p>
                     </div>
                 </div>
             </div>
@@ -1290,9 +1289,15 @@
                         <td class="py-3 px-3 font-medium text-slate-900">${itemsSummary}</td>
                         <td class="py-3 px-3 whitespace-nowrap text-slate-800 font-medium">${trx.dept}</td>
                         <td class="py-3 px-3 whitespace-nowrap text-center font-bold text-amber-600">${itemList.length} Item</td>
-                        <td class="py-3 px-3 whitespace-nowrap text-center">
-                            <button onclick="openSerahTerimaModalFromStorage('${trx.id}')" class="px-2.5 py-1 bg-brand-50 hover:bg-brand-100 text-brand-700 rounded-lg text-xs font-semibold transition flex items-center gap-1 mx-auto" title="Cetak Bukti Serah Terima">
+                        <td class="py-3 px-3 whitespace-nowrap text-center space-x-1">
+                            <button onclick="editOutbound('${trx.id}')" class="p-1.5 bg-slate-100 hover:bg-amber-50 hover:text-amber-600 rounded-lg text-slate-600 transition inline-flex items-center gap-1" title="Edit Distribusi">
+                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button onclick="openSerahTerimaModalFromStorage('${trx.id}')" class="px-2.5 py-1 bg-brand-50 hover:bg-brand-100 text-brand-700 rounded-lg text-xs font-semibold transition inline-flex items-center gap-1" title="Cetak Bukti Serah Terima">
                                 <i data-lucide="file-signature" class="w-3.5 h-3.5"></i> Cetak BAST
+                            </button>
+                            <button onclick="deleteTransaction('${trx.id}')" class="p-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-slate-600 transition inline-flex items-center" title="Hapus">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             </button>
                         </td>
                     `;
@@ -1304,6 +1309,73 @@
                 tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400 text-xs">Belum ada riwayat distribusi</td></tr>`;
             }
             lucide.createIcons({ root: tbody });
+        }
+
+        window.editOutbound = function(id) {
+            const trx = transactions.find(t => t.id === id);
+            if(!trx) return;
+
+            document.getElementById('out-date').value = trx.date;
+            document.getElementById('out-dept').value = trx.dept;
+            document.getElementById('out-notes').value = trx.notes || '';
+
+            const container = document.getElementById('outbound-items-container');
+            container.innerHTML = '';
+            outboundRowCounter = 0;
+
+            const itemList = trx.items || [{ itemName: trx.itemName, itemBrand: trx.itemBrand, qty: trx.qty }];
+            itemList.forEach(item => {
+                outboundRowCounter++;
+                const rowId = `out-row-${outboundRowCounter}`;
+                const div = document.createElement('div');
+                div.id = rowId;
+                div.className = "bg-slate-50 p-3 rounded-xl border border-slate-200/90 space-y-2 relative group";
+                div.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Item #${outboundRowCounter}</span>
+                        <button type="button" onclick="removeOutboundRow('${rowId}')" class="text-rose-500 hover:text-rose-700 p-1 rounded-md transition" title="Hapus Baris">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                    <div>
+                        <select class="out-item-select w-full text-xs px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none" onchange="updateOutboundRowStock('${rowId}')" required>
+                            <option value="">-- Pilih Barang --</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="w-1/2">
+                            <label class="block text-[10px] text-slate-500 font-medium mb-1">Jumlah Diserahkan</label>
+                            <input type="number" value="${item.qty}" class="out-item-qty w-full text-xs px-3 py-1.5 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none" min="1" placeholder="Qty" required>
+                        </div>
+                        <div class="w-1/2 text-right">
+                            <span class="block text-[10px] text-slate-400">Sisa Stok:</span>
+                            <span class="out-item-stock-info font-bold text-xs text-brand-700">-</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+
+                const select = div.querySelector('.out-item-select');
+                const key = `${item.itemName.trim()} | ${(item.itemBrand || '-').trim()}`;
+                
+                Object.values(inventoryItems).forEach(invItem => {
+                    const opt = document.createElement('option');
+                    opt.value = invItem.key;
+                    opt.textContent = `${invItem.name} (${invItem.brand || '-'}) - Stok: ${invItem.currentStock}`;
+                    select.appendChild(opt);
+                });
+                select.value = key;
+                updateOutboundRowStock(rowId);
+            });
+
+            // Remove existing outbound transaction temporarily so stock calculations allow re-selecting
+            deleteTransactionFromCloud(id);
+            transactions = transactions.filter(t => t.id !== id);
+            recalculateInventory();
+
+            showToast('Data distribusi dimasukkan ke form untuk diedit');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            lucide.createIcons();
         }
 
         // --- Serah Terima Modal Functions ---
