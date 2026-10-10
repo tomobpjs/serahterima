@@ -68,7 +68,6 @@
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col md:flex-row">
 
-    <!-- Mobile Top Navigation Header -->
     <div class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center sticky top-0 z-50 border-b border-slate-800 no-print">
         <div class="flex items-center gap-2">
             <div class="bg-brand-600 p-2 rounded-lg">
@@ -81,7 +80,6 @@
         </button>
     </div>
 
-    <!-- SIDEBAR NAVIGASI DI SAMPING (Desktop & Mobile Drawer) -->
     <aside id="sidebar" class="no-print fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 flex flex-col transform -translate-x-full md:translate-x-0 md:static transition-transform duration-300 ease-in-out border-r border-slate-800 shrink-0">
         <div class="p-6 border-b border-slate-800/80 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -145,7 +143,6 @@
 
         <main class="flex-grow p-4 sm:p-6 lg:p-8 overflow-y-auto">
 
-            <!-- ================= DASHBOARD PAGE ================= -->
             <section id="page-dashboard" class="space-y-6">
                 <div class="bg-gradient-to-r from-brand-700 via-brand-600 to-indigo-800 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-brand-700/15 relative overflow-hidden">
                     <div class="relative z-10 max-w-2xl">
@@ -232,7 +229,6 @@
                 </div>
             </section>
 
-            <!-- ================= BARANG MASUK PAGE ================= -->
             <section id="page-masuk" class="hidden space-y-6">
                 <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
                     <div class="xl:col-span-1 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm h-fit">
@@ -343,7 +339,6 @@
                 </div>
             </section>
 
-            <!-- ================= DISTRIBUSI PAGE ================= -->
             <section id="page-distribusi" class="hidden space-y-6">
                 <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
                     <div class="xl:col-span-1 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm h-fit">
@@ -421,7 +416,6 @@
                 </div>
             </section>
 
-            <!-- ================= LAPORAN PAGE ================= -->
             <section id="page-laporan" class="hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm print-area">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 mb-6 border-b border-slate-100 no-print">
@@ -482,7 +476,6 @@
                 </div>
             </section>
 
-            <!-- ================= LACAK BARANG PAGE ================= -->
             <section id="page-lacak" class="hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
                     <div class="mb-6">
@@ -522,7 +515,6 @@
         </main>
     </div>
 
-    <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- Modal for Viewing Compressed Photo -->
@@ -656,6 +648,11 @@
                 </div>
             </div>
 
+            <!-- KETERANGAN DIGITAL DI KIRI BAWAH -->
+            <div class="mt-6 pt-2 text-[11px] text-slate-500 italic text-left">
+                dokumen ini dicetak otomatis digital
+            </div>
+
             <!-- TOMBOL AKSI MODAL -->
             <div class="mt-8 pt-4 border-t border-slate-100 flex justify-end gap-3 no-print">
                 <button onclick="closeSerahTerimaModal()" class="px-4 py-2.5 rounded-xl text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition">Tutup</button>
@@ -666,7 +663,6 @@
         </div>
     </div>
 
-    <!-- Firebase SDK & App Logic Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -777,7 +773,6 @@
                     inventoryItems[key].totalIn += Number(trx.qty);
                     inventoryItems[key].lastPrice = Number(trx.price) || inventoryItems[key].lastPrice;
                 } else if (trx.type === 'outbound') {
-                    // Handle single or multi-item format
                     const itemList = trx.items || [{ itemName: trx.itemName, itemBrand: trx.itemBrand, qty: trx.qty }];
                     itemList.forEach(item => {
                         const brandStr = item.itemBrand ? item.itemBrand.trim() : '';
@@ -877,7 +872,6 @@
             overlay.classList.toggle('hidden');
         }
 
-        // --- Dashboard Renderer ---
         window.renderDashboard = function() {
             const tbody = document.getElementById('dash-stock-tbody');
             const searchTerm = (document.getElementById('dash-search').value || '').toLowerCase();
@@ -933,7 +927,6 @@
             lucide.createIcons({ root: tbody });
         }
 
-        // --- Image Compression & Upload ---
         window.handleImageUpload = function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -976,7 +969,6 @@
             reader.readAsDataURL(file);
         }
 
-        // --- Inbound Transactions ---
         window.handleInboundSubmit = async function(event) {
             event.preventDefault();
             const id = document.getElementById('in-doc-id').value || 'TRX-' + Date.now();
@@ -1108,7 +1100,6 @@
             showToast('Transaksi berhasil dihapus');
         }
 
-        // --- Multi-Item Outbound Logic ---
         let outboundRowCounter = 0;
 
         window.initOutboundForm = function() {
@@ -1160,7 +1151,6 @@
             const row = document.getElementById(rowId);
             if(row) {
                 row.remove();
-                // Update item counter labels
                 const container = document.getElementById('outbound-items-container');
                 Array.from(container.children).forEach((child, idx) => {
                     const badge = child.querySelector('span');
@@ -1260,7 +1250,6 @@
             renderOutboundTable();
             renderDashboard();
 
-            // Open instant BAST modal preview with details & multi-items
             openSerahTerimaModal(newTrx);
 
             document.getElementById('form-outbound').reset();
@@ -1368,7 +1357,6 @@
                 updateOutboundRowStock(rowId);
             });
 
-            // Remove existing outbound transaction temporarily so stock calculations allow re-selecting
             deleteTransactionFromCloud(id);
             transactions = transactions.filter(t => t.id !== id);
             recalculateInventory();
@@ -1378,7 +1366,6 @@
             lucide.createIcons();
         }
 
-        // --- Serah Terima Modal Functions ---
         window.openSerahTerimaModal = function(trx) {
             document.getElementById('st-nomor-surat').textContent = `Nomor: BAST/${trx.id}/RT-RSUD/2026`;
             document.getElementById('st-date').textContent = formatDate(trx.date);
@@ -1431,7 +1418,6 @@
             }, 300);
         }
 
-        // --- Photo Modal ---
         window.openPhotoModal = function(src) {
             document.getElementById('modal-img').src = src;
             const modal = document.getElementById('photo-modal');
@@ -1455,7 +1441,6 @@
             }, 300);
         }
 
-        // --- Master Item Edit Modal ---
         window.openEditItemMasterModal = function(key) {
             currentEditItemKey = key;
             const item = inventoryItems[key];
@@ -1523,7 +1508,6 @@
             showToast('Data master barang berhasil diperbarui di seluruh riwayat!');
         }
 
-        // --- Report Generator ---
         window.renderLaporan = function() {
             const monthInput = document.getElementById('report-month');
             if(!monthInput.value) {
@@ -1593,7 +1577,6 @@
             document.getElementById('report-sum-value').textContent = formatRupiah(sumValue);
         }
 
-        // --- Lacak Kartu Stok ---
         window.populateLacakSelect = function() {
             const select = document.getElementById('lacak-item-select');
             const currentVal = select.value;
@@ -1690,7 +1673,6 @@
             });
         }
 
-        // Window Onload Initialization
         window.onload = function() {
             lucide.createIcons();
             const today = new Date().toISOString().split('T')[0];
