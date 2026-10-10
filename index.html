@@ -135,7 +135,7 @@
                 </div>
                 <div class="overflow-hidden w-full ml-3 relative">
                     <div class="animate-marquee text-xs font-medium tracking-wide text-slate-300">
-                        ✨ Selamat Datang di Portal Inventory • Bagian Rumah Tangga • TOMOS JR 2026
+                        ✨ Selamat Datang di Portal Serah Terima Barang • Bagian Rumah Tangga • TOMOS JR 2026
                     </div>
                 </div>
             </div>
@@ -573,10 +573,10 @@
                 <div class="flex items-center justify-center gap-3 mb-1">
                     <div class="text-center">
                         <h2 class="text-base sm:text-xl font-extrabold text-brand-700 uppercase tracking-wide">RUMAH SAKIT UMUM DADI KELUARGA PURWOKERTO</h2>
-                        <p class="text-[11px] font-semibold text-slate-600">Bagian Rumah Tangga</p>
+                        <p class="text-[11px] font-semibold text-slate-600">Bagian Rumah Tangga & Logistik</p>
                     </div>
                 </div>
-                <p class="text-[10px] text-slate-500 mt-1">Jl.Sultan Agung No.8A Purwokerto Selatan</p>
+                <p class="text-[10px] text-slate-500 mt-1">Jl.Sultan Agung No.8A Teluk - Purwokerto Selatan - Banyumas</p>
             </div>
 
             <!-- JUDUL SURAT -->
@@ -646,7 +646,7 @@
             </div>
 
             <!-- KETERANGAN DIGITAL DI KIRI BAWAH -->
-            <div class="mt-6 pt-2 text-[11px] text-slate-500 italic text-left">
+            <div class="mt-6 pt-2 text-[8px] text-slate-500 italic text-left">
                 dokumen ini dicetak otomatis digital melalui Portal Inventory Bagian Rumah Tangga
             </div>
 
@@ -1364,7 +1364,7 @@
         }
 
         window.openSerahTerimaModal = function(trx) {
-            document.getElementById('st-nomor-surat').textContent = `Nomor: BAST/${trx.id}/RT-RSUD/2026`;
+            document.getElementById('st-nomor-surat').textContent = `Nomor: BAST/${trx.id}/RT-RSDK/2026`;
             document.getElementById('st-date').textContent = formatDate(trx.date);
             document.getElementById('st-dept').textContent = trx.dept;
             document.getElementById('st-dept-sign').textContent = `Unit: ${trx.dept}`;
